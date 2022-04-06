@@ -1,19 +1,21 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerBall : MonoBehaviour
 {
     public float jumpPower;
     public int itemCount;
+    public GameManager manager;
     bool isJump;
     Rigidbody rigid;
-    AudioSource audio;
+    AudioSource audio1;
     private void Awake()
     {
         isJump = false;
         rigid = GetComponent<Rigidbody>();
-        audio = GetComponent<AudioSource>();
+        audio1 = GetComponent<AudioSource>();
     }
     // Update is called once per frame
     private void Update()
@@ -28,7 +30,6 @@ public class PlayerBall : MonoBehaviour
     {
         float h = Input.GetAxisRaw("Horizontal");
         float v = Input.GetAxisRaw("Vertical");
-
         rigid.AddForce(new Vector3(h, 0, v), ForceMode.Impulse);
     }
 
@@ -44,8 +45,21 @@ public class PlayerBall : MonoBehaviour
         if (other.tag == "Item")
         {
             itemCount++;
-            audio.Play();
+            audio1.Play();
             other.gameObject.SetActive(false);
+            manager.GetItem(itemCount);
+        }
+        else if (other.tag == "Finish")
+        {
+            if(itemCount == manager.totalItemCount)
+            {
+                SceneManager.LoadScene(1);
+
+            }
+            else
+            {
+                SceneManager.LoadScene(0);
+            }
         }
     }
 }
